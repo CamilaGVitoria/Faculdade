@@ -38,12 +38,12 @@ public class TorreDeHanoi {
         long movimentos = 0;
 
         if (numeroDisco == 1) {
-            //System.out.println("Move disco 1 da torre " + torreOrigem + " para a torre " + torreDestino);
+            System.out.println("Move disco 1 da torre " + torreOrigem + " para a torre " + torreDestino);
             
             movimentos++;
         } else {
             movimentos += moverDiscos(numeroDisco-1, torreOrigem, torreAuxiliar, torreDestino);
-            //System.out.println("Move disco " + numeroDisco + " da torre " + torreOrigem + " para a torre " + torreDestino);
+            System.out.println("Move disco " + numeroDisco + " da torre " + torreOrigem + " para a torre " + torreDestino);
             
             movimentos++;
             
