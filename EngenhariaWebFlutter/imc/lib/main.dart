@@ -4,6 +4,7 @@ import 'package:imc/main_imc.dart';
 void main() {
   runApp(MaterialApp(
     title: 'Calculo IMC',
+    debugShowCheckedModeBanner: false,
     theme: ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
       useMaterial3: false,
