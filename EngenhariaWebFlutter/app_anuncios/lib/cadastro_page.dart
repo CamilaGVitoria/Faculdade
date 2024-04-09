@@ -1,4 +1,4 @@
-import 'package:app_anuncios/model/produto.dart';
+import 'package:app_anuncios/model/anuncio.dart';
 import 'package:flutter/material.dart';
 
 class CadastroPage extends StatefulWidget {
@@ -84,12 +84,12 @@ class _CadastroPage extends State<CadastroPage> {
                         ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        Produto produto = Produto(
+                        Anuncio anuncio = Anuncio(
                           _nomeControler.text,
                           _informacoesControler.text,
                           _precoControler.text,
                         );
-                        Navigator.pop(context, produto);
+                        Navigator.pop(context, anuncio);
                       }
                     },
                     child: const Text(

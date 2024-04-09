@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:app_anuncios/model/produto.dart';
+import 'package:app_anuncios/model/anuncio.dart';
 import 'package:app_anuncios/cadastro_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-  List<Produto> produtos = List.empty(growable: true);
+  List<Anuncio> anuncios = List.empty(growable: true);
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +32,13 @@ class _HomePage extends State<HomePage> {
               crossAxisSpacing: 8,
             ),
             itemBuilder: (context, index) {
-              Produto _produto = produtos[index];
+              Anuncio _anuncio = anuncios[index];
               return Dismissible(
                 key: GlobalKey(),
                 onDismissed: (direction) {
                   if (direction == DismissDirection.endToStart) {
                     setState(() {
-                      produtos.removeAt(index);
+                      anuncios.removeAt(index);
                     });
                   } else {
                     Navigator.push(
@@ -86,11 +86,11 @@ class _HomePage extends State<HomePage> {
                             Column(
                               children: [
                                 Text(
-                                  _produto.nome,
+                                  _anuncio.nome,
                                   style: const TextStyle(fontSize: 20),
                                 ),
                                 Text(
-                                  _produto.informacoes,
+                                  _anuncio.informacoes,
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.grey),
                                 ),
@@ -102,7 +102,7 @@ class _HomePage extends State<HomePage> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'R\$${_produto.preco}',
+                              'R\$${_anuncio.preco}',
                               style: const TextStyle(fontSize: 20),
                             )
                           ],
@@ -115,10 +115,10 @@ class _HomePage extends State<HomePage> {
                         Icons.newspaper,
                         color: Colors.deepOrange,
                       ),
-                      title: Text(_produto.nome),
-                      subtitle: Text(_produto.informacoes),
+                      title: Text(_anuncio.nome),
+                      subtitle: Text(_anuncio.informacoes),
                       trailing: Text(
-                        'R\$${_produto.preco}',
+                        'R\$${_anuncio.preco}',
                         style: TextStyle(fontSize: 20),
                       ),
                     ),*/
@@ -126,17 +126,17 @@ class _HomePage extends State<HomePage> {
                 ),
               );
             },
-            itemCount: produtos.length),
+            itemCount: anuncios.length),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final Produto? produto = await Navigator.push(
+          final Anuncio? anuncio = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => CadastroPage()),
           );
-          if (produto != null) {
+          if (anuncio != null) {
             setState(() {
-              produtos.add(produto);
+              anuncios.add(anuncio);
             });
           }
         },
