@@ -9,7 +9,7 @@ void main() {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: HomePage(), 
     ),
   );
 }

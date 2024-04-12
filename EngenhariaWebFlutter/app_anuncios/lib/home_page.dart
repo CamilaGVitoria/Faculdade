@@ -1,6 +1,8 @@
+import 'package:app_anuncios/anuncio_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:app_anuncios/model/anuncio.dart';
 import 'package:app_anuncios/cadastro_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -11,6 +13,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePage extends State<HomePage> {
   List<Anuncio> anuncios = List.empty(growable: true);
+  final AnuncioHelper _helper = AnuncioHelper();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _helper.getAll().then((data) {
+      setState(() {
+        if (data != null) anuncios = data;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,30 +38,41 @@ class _HomePage extends State<HomePage> {
         backgroundColor: Colors.deepOrange,
       ),
       body: Container(
-        padding: const EdgeInsets.only(right: 10, left: 10, top: 10),
-        child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 0,
-              crossAxisSpacing: 8,
-            ),
+        child: ListView.separated(
+            separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, index) {
               Anuncio _anuncio = anuncios[index];
               return Dismissible(
                 key: GlobalKey(),
-                onDismissed: (direction) {
-                  if (direction == DismissDirection.endToStart) {
-                    setState(() {
-                      anuncios.removeAt(index);
-                    });
-                  } else {
-                    Navigator.push(
+                onDismissed: (direction) async {
+                  if (direction == DismissDirection.startToEnd) {
+                    Anuncio editarAnuncio = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CadastroPage(),
+                        builder: (context) => CadastroPage(anuncio: _anuncio),
                       ),
                     );
+
+                    var result = await _helper.editAnuncio(editarAnuncio);
+
+                    if (_anuncio != null) {
+                      setState(() {
+                        anuncios.removeAt(index);
+                        anuncios.add(editarAnuncio);
+                      });
+                    } else if (direction == DismissDirection.endToStart) {
+                      var result =
+                          await _helper.deleteAnuncio(index as Anuncio);
+
+                      if (result != null) {
+                        setState(() {
+                          anuncios.removeAt(index);
+                        });
+                      }
+                    }
+                    return Future(() => false);
                   }
+                  return Future(() => true);
                 },
                 secondaryBackground: Container(
                   color: Colors.red,
@@ -70,58 +95,108 @@ class _HomePage extends State<HomePage> {
                   ),
                 ),
                 child: Container(
-                  height: MediaQuery.of(context).size.width * 16,
-                  width: MediaQuery.of(context).size.width * 16,
                   child: Card(
-                    child: Column(
-                      children: <Widget>[
-                        const Icon(
-                          Icons.newspaper,
-                          size: 100,
-                          color: Colors.deepOrange,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: [
-                                Text(
-                                  _anuncio.nome,
-                                  style: const TextStyle(fontSize: 20),
-                                ),
-                                Text(
-                                  _anuncio.informacoes,
-                                  style: const TextStyle(
-                                      fontSize: 15, color: Colors.grey),
-                                ),
-                              ],
+                    child: ListTile(
+                      leading: _anuncio.image != null
+                          ? CircleAvatar(
+                              child: ClipOval(
+                                child: Image.file(_anuncio.image!),
+                              ),
                             )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              'R\$${_anuncio.preco}',
-                              style: const TextStyle(fontSize: 20),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-
-                    /*child: ListTile(
-                      leading: const Icon(
-                        Icons.newspaper,
-                        color: Colors.deepOrange,
-                      ),
+                          : const SizedBox(),
                       title: Text(_anuncio.nome),
                       subtitle: Text(_anuncio.informacoes),
                       trailing: Text(
                         'R\$${_anuncio.preco}',
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
-                    ),*/
+                      onLongPress: () async {
+                        showBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Container(
+                              padding: EdgeInsets.all(10.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ListTile(
+                                    leading: Icon(Icons.email),
+                                    title: Text('Enviar por e-mail'),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      Anuncio anuncio = anuncios[index];
+
+                                      final uri = Uri(
+                                        scheme: 'mailto',
+                                        path: 'camilagvitoria1@gmail.com',
+                                        queryParameters: {
+                                          
+                                        },
+                                      );
+
+                                      final url = uri.toString();
+                                      if (await canLaunchUrl(Uri.parse(url))) {
+                                        await launchUrl(Uri.parse(url));
+                                      } else {
+                                        print('Erro ao enviar e-mail');
+                                      }
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: Icon(Icons.sms),
+                                    title: Text('Enviar por SMS'),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      Anuncio anuncio = anuncios[index];
+
+                                      final uri = Uri(
+                                        scheme: 'sms',
+                                        path: '+55 62 984273832',
+                                        queryParameters: {
+                                          'subject': _anuncio.nome,
+                                          'body': '${_anuncio.image}  ${_anuncio.informacoes} R\$${_anuncio.preco}'
+                                        },
+                                      );
+
+                                      final url = uri.toString();
+                                      if (await canLaunchUrl(Uri.parse(url))) {
+                                        await launchUrl(Uri.parse(url));
+                                      } else {
+                                        print('Erro ao enviar sms');
+                                      }
+                                    },
+                                  ),
+                                  ListTile(
+                                    leading: Icon(Icons.phone_android),
+                                    title: Text('Enviar por Whatsapp'),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      Anuncio anuncio = anuncios[index];
+
+                                      final uri = Uri(
+                                        scheme: 'whatsapp',
+                                        path: '',
+                                        queryParameters: {
+                                          'subject': _anuncio.nome,
+                                          'body': '${_anuncio.image}  ${_anuncio.informacoes} R\$${_anuncio.preco}'
+                                        },
+                                      );
+
+                                      final url = uri.toString();
+                                      if (await canLaunchUrl(Uri.parse(url))) {
+                                        await launchUrl(Uri.parse(url));
+                                      } else {
+                                        print('Erro ao enviar whatsapp');
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
               );
@@ -134,7 +209,10 @@ class _HomePage extends State<HomePage> {
             context,
             MaterialPageRoute(builder: (context) => CadastroPage()),
           );
-          if (anuncio != null) {
+
+          Anuncio? savedAnuncio = await _helper.saveAnuncio(anuncio!);
+
+          if (savedAnuncio != null) {
             setState(() {
               anuncios.add(anuncio);
             });
