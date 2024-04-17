@@ -1,16 +1,11 @@
 # imc
 
-A new Flutter project.
+Calculadora de IMC
 
-## Getting Started
+## O que é:
 
-This project is a starting point for a Flutter application.
+É um projeto onde o usuário irá informar peso e altura e o app irá retornar a situação do peso da pessoa, podendo ser ela: abaixo do peso, eso ideal, levemente acimado peso, Obesidade grau I, obesidade grau II e obesidade grau III; para cada resposta será exibida uma imagem ilustrativa.
 
-A few resources to get you started if this is your first Flutter project:
+![app_imc_img1](https://github.com/CamilaGVitoria/apps/assets/102991464/aad426a5-ad60-49d5-899d-56e7a75fccce)
+![app_imc_img2](https://github.com/CamilaGVitoria/apps/assets/102991464/1e2e6b29-9002-428f-a6b2-e0be22b4be05)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
