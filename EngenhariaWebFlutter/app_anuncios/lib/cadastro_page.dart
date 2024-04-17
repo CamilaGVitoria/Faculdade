@@ -34,12 +34,14 @@ class _CadastroPage extends State<CadastroPage> {
 
   @override
   Widget build(BuildContext context) {
+    Anuncio? _anuncio = widget.anuncio;
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Cadastro',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          _anuncio == null ? 'Cadastro' : 'Editar',
+          style: const TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         backgroundColor: Colors.deepOrange,
@@ -48,34 +50,37 @@ class _CadastroPage extends State<CadastroPage> {
         children: [
           GestureDetector(
             child: Container(
-              width: 100,
-              height: 120,
-              margin: const EdgeInsets.only(top: 30),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                border: Border.all(
-                  width: 1,
-                  color: Colors.grey,
+                width: 100,
+                height: 120,
+                margin: const EdgeInsets.only(top: 30),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  border: Border.all(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
+                  shape: BoxShape.circle,
                 ),
-                shape: BoxShape.circle,
-              ),
-              child: _image == null ? const Icon(
-                Icons.add_a_photo,
-                size: 30,
-              ) : ClipOval(
-                child: Image.file(_image!),
-              )
-            ),
+                child: _image == null
+                    ? const Icon(
+                        Icons.add_a_photo,
+                        size: 30,
+                      )
+                    : ClipOval(
+                        child: Image.file(_image!),
+                      )),
             onTap: () async {
               final ImagePicker _picker = ImagePicker();
-              final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
+              final XFile? pickedFile =
+                  await _picker.pickImage(source: ImageSource.camera);
               if (pickedFile != null) {
                 File image = File(pickedFile.path);
-                Directory directory =  await getApplicationDocumentsDirectory();
+                Directory directory = await getApplicationDocumentsDirectory();
                 String _localPath = directory.path;
                 String uniqueID = UniqueKey().toString();
 
-                final File savedImage = await image.copy('$_localPath/$uniqueID.png');
+                final File savedImage =
+                    await image.copy('$_localPath/$uniqueID.png');
                 setState(() {
                   _image = savedImage;
                 });
