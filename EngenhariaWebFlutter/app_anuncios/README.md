@@ -1,16 +1,16 @@
 # app_anuncios
 
-A new Flutter project.
+Aplicativo de Anuncios
 
-## Getting Started
+## O que é:
+Projeto feito seguindo ensinamentos em sala de aula;
+Tem o objetivo de apresentar uma lista de anuncios com título, descrição, preço e imagem;
+Cada item poderá ser editado quando o usuário arastar o anuncio da esquerda para direita e excluido quando arrastado da direita para esquerda.
 
-This project is a starting point for a Flutter application.
+APP AINDA EM DESENVOLVIMENTO
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![app_anuncios_home_page](https://github.com/CamilaGVitoria/apps/assets/102991464/49db403b-67b7-4f9e-a659-1cf68bbf426b)
+![app_anuncios_cadastro_page](https://github.com/CamilaGVitoria/apps/assets/102991464/54bd3607-32c5-4861-a693-c1499dc1a27f)
+![app_anuncios_editar](https://github.com/CamilaGVitoria/apps/assets/102991464/67166383-b7e2-4ff2-a5df-09f4073db631)
+![app_anuncios_home_editar](https://github.com/CamilaGVitoria/apps/assets/102991464/da85b294-5a4c-4777-afee-8255c5a8fa36)
+![app_anuncios_home_excluir](https://github.com/CamilaGVitoria/apps/assets/102991464/f79a75b3-ed4d-4d92-a87e-4d52d6141b74)
