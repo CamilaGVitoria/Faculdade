@@ -152,6 +152,11 @@ class _CadastroPage extends State<CadastroPage> {
                               _precoControler.text,
                               _image!,
                             );
+
+                            if(widget.anuncio != null){
+                              anuncio.id = widget.anuncio!.id;
+                            }
+                            
                             Navigator.pop(context, anuncio);
                           }
                         },

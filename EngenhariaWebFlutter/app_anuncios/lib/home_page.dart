@@ -58,21 +58,22 @@ class _HomePage extends State<HomePage> {
                     if (_anuncio != null) {
                       setState(() {
                         anuncios.removeAt(index);
-                        anuncios.add(editarAnuncio);
+                        anuncios.insert(index, editarAnuncio);
                       });
-                    } else if (direction == DismissDirection.endToStart) {
+                    } 
+                    return Future(() => false);
+                  }else if (direction == DismissDirection.endToStart) {
                       var result =
-                          await _helper.deleteAnuncio(index as Anuncio);
+                          await _helper.deleteAnuncio(_anuncio);
 
                       if (result != null) {
                         setState(() {
                           anuncios.removeAt(index);
+                          
                         });
                       }
+                       return Future(() => true);
                     }
-                    return Future(() => false);
-                  }
-                  return Future(() => true);
                 },
                 secondaryBackground: Container(
                   color: Colors.red,
@@ -214,7 +215,7 @@ class _HomePage extends State<HomePage> {
 
           if (savedAnuncio != null) {
             setState(() {
-              anuncios.add(anuncio);
+              anuncios.add(savedAnuncio);
             });
           }
         },
