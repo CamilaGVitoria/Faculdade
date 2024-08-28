@@ -1,0 +1,110 @@
+const User = require('../model/User');
+const { validationResult, matchedData } = require('express-validator');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+module.exports = {
+    register: async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({ error: errors.mapped() });
+            return;
+        }
+
+        const data = matchedData(req);
+        const userExists = await User.findOne({ userName: data.userName });
+
+        if (userExists) {
+            res.status(422).json({
+                msg: 'Nome de usuário já existe!'
+            });
+            return;
+        }
+
+        const salt = await bcrypt.genSalt(12);
+        const passwordHash = await bcrypt.hash(data.password, salt);
+
+        const newUser = new User({
+            userName: data.userName,
+            password: passwordHash
+        });
+
+        try {
+            const info = await newUser.save();
+            res.status(201).json({
+                msg: 'Usuário criado com sucesso!', info
+            });
+        } catch (error) {
+            res.status(500).json({
+                msg: 'Erro no servidor!'
+            });
+        }
+    },
+
+    login: async (req, res) => {
+        const { userName, password } = req.body;
+
+        const user = await User.findOne({ userName });
+
+        if (!user) {
+            return res.status(404).json({
+                msg: 'Usuário não encontrado!'
+            });
+        }
+
+        const checkPassword = await bcrypt.compare(password, user.password);
+
+        if (!checkPassword) {
+            return res.status(422).json({
+                msg: 'Senha incorreta!'
+            });
+
+        }
+
+        try {
+            const secret = process.env.SECRET;
+            const token = jwt.sign(
+                { id: user._id },
+                secret,
+                { expiresIn: '1h' }
+            );
+
+            res.status(200).json({
+                msg: 'Autenticação realizada com sucesso!', token
+            });
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({
+                msg: 'Erro no servidor!'
+            });
+        }
+    },
+
+    getUser: async (req, res) => {
+        let id = req.params.id;
+        const user = await User.findById(id, '-password');
+
+        if (!user) {
+            res.status(404).json({
+                msg: 'Usuário não encontrado!'
+            });
+            return;
+        }
+        res.json({ user });
+    },
+
+    deleteUser: async (req, res) => {
+        const id = req.params.id;
+        const user = await User.findByIdAndDelete(id);
+
+        if (!user) {
+            res.status(404).json({
+                res: 'Não foi possível deletar o usuário!'
+            });
+            return;
+        }
+        res.status(200).json({
+            res: 'Usuário deletado com sucesso!', user
+        });
+    },
+};
