@@ -104,7 +104,33 @@ module.exports = {
             return;
         }
         res.status(200).json({
-            res: 'Usuário deletado com sucesso!', user
+            res: 'Usuário deletado com sucesso!', nameUser: user.userName
         });
+    },
+
+    editUser: async (req,res) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            res.json({
+                error: errors.mapped()
+            });
+            return;
+        }
+
+        const id = req.params.id;
+        const { userName, password } = req.body;
+
+        const data = matchedData(req);
+        const salt = await bcrypt.genSalt(12);
+        const passwordHash = await bcrypt.hash(data.password, salt);
+
+        const user = await User.findByIdAndUpdate(
+            id,
+            { userName, password: passwordHash },
+            { new: true, runValidatorns: true }
+        );
+
+        res.json({ user });
     },
 };
