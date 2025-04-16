@@ -1,100 +1,153 @@
 import java.util.*;
 
 class Item {
-    int value, weight;
+    int valor, peso;
 
-    public Item(int value, int weight) {
-        this.value = value;
-        this.weight = weight;
+    public Item(int valor, int peso) {
+        this.valor = valor;
+        this.peso = peso;
     }
 }
 
 public class App {
-    static final int MAX_WEIGHT = 15;
-    static final int POPULATION_SIZE = 10;
-    static final double MUTATION_RATE = 0.1;
-    static final int GENERATIONS = 50;
+    static final int pesoMax = 15;
+    static final int tamanhoPopulacao = 10;
+    static final double chanceMutacao = 0.1;
+    static final int geracoes = 50;
     static final Random rand = new Random();
 
-    static List<Item> items = Arrays.asList(
+    static List<Item> itens = Arrays.asList(
             new Item(10, 2), new Item(5, 3), new Item(15, 5),
             new Item(7, 7), new Item(6, 1), new Item(18, 4),
             new Item(3, 1));
 
-    static int[] generateIndividual() {
-        int[] individual = new int[items.size()];
-        for (int i = 0; i < items.size(); i++) {
-            individual[i] = rand.nextInt(2);
+    static int[] geraIndividuo() {
+        int[] individuo = new int[itens.size()];
+        for (int i = 0; i < itens.size(); i++) {
+            individuo[i] = rand.nextInt(2);
         }
-        return individual;
+        return individuo;
     }
 
-    static int fitness(int[] individual) {
-        int totalValue = 0, totalWeight = 0;
-        for (int i = 0; i < items.size(); i++) {
-            if (individual[i] == 1) {
-                totalValue += items.get(i).value;
-                totalWeight += items.get(i).weight;
+    // fitness
+    static int avaliarIndividuo(int[] individuo) {
+        int valorTotal = 0, pesoTotal = 0;
+        for (int i = 0; i < itens.size(); i++) {
+            if (individuo[i] == 1) {
+                valorTotal += itens.get(i).valor;
+                pesoTotal += itens.get(i).peso;
             }
         }
-        return (totalWeight <= MAX_WEIGHT) ? totalValue : 0;
+        return (pesoTotal <= pesoMax) ? valorTotal : 0;
     }
 
-    static int[] selection(List<int[]> population) {
-        return population.get(rand.nextInt(population.size()));
-    }
-
-    static int[][] crossover(int[] parent1, int[] parent2) {
-        int point = rand.nextInt(items.size());
-        int[] child1 = Arrays.copyOf(parent1, items.size());
-        int[] child2 = Arrays.copyOf(parent2, items.size());
-
-        for (int i = point; i < items.size(); i++) {
-            child1[i] = parent2[i];
-            child2[i] = parent1[i];
+    static int calcularPeso(int[] individuo) {
+        int pesoTotal = 0;
+        for (int i = 0; i < individuo.length; i++) {
+            if (individuo[i] == 1) {
+                pesoTotal += itens.get(i).peso;
+            }
         }
-        return new int[][] { child1, child2 };
+        return pesoTotal;
     }
 
-    static void mutate(int[] individual) {
-        for (int i = 0; i < individual.length; i++) {
-            if (rand.nextDouble() < MUTATION_RATE) {
-                individual[i] = 1 - individual[i];
+    static int[] selecao(List<int[]> populacao) {
+        return populacao.get(rand.nextInt(populacao.size()));
+    }
+
+    // Crossover
+    static int[][] combinarPais(int[] pai1, int[] pai2) {
+        int tamanho = itens.size();
+        int meio = tamanho / 2;
+
+        int[] filho1 = new int[tamanho];
+        int[] filho2 = new int[tamanho];
+
+        for (int i = 0; i < tamanho; i++) {
+            if (i < meio) {
+                filho1[i] = pai1[i];
+                filho2[i] = pai2[i];
+            } else {
+                filho1[i] = pai2[i];
+                filho2[i] = pai1[i];
+            }
+        }
+
+        return new int[][] { filho1, filho2 };
+    }
+
+    static void mutacao(int[] individuo) {
+        for (int i = 0; i < individuo.length; i++) {
+            if (rand.nextDouble() < chanceMutacao) {
+                individuo[i] = 1 - individuo[i];
             }
         }
     }
 
-    static int[] geneticAlgorithm() {
-        List<int[]> population = new ArrayList<>();
-        for (int i = 0; i < POPULATION_SIZE; i++) {
-            population.add(generateIndividual());
+    static int encontrarValorMaximoPossivel() {
+        int maxValor = 0;
+        int n = itens.size();
+        for (int i = 0; i < (1 << n); i++) {
+            int valor = 0, peso = 0;
+            for (int j = 0; j < n; j++) {
+                if (((i >> j) & 1) == 1) {
+                    valor += itens.get(j).valor;
+                    peso += itens.get(j).peso;
+                }
+            }
+            if (peso <= pesoMax) {
+                maxValor = Math.max(maxValor, valor);
+            }
+        }
+        return maxValor;
+    }
+
+    static int[] algoritmoGenetico() {
+        int melhorValorPossivel = encontrarValorMaximoPossivel();
+        System.out.println("Melhor valor possível: " + melhorValorPossivel);
+
+        List<int[]> populacao = new ArrayList<>();
+        for (int i = 0; i < tamanhoPopulacao; i++) {
+            populacao.add(geraIndividuo());
         }
 
-        for (int gen = 0; gen < GENERATIONS; gen++) {
-            List<int[]> newPopulation = new ArrayList<>();
-            for (int i = 0; i < POPULATION_SIZE / 2; i++) {
-                int[] parent1 = selection(population);
-                int[] parent2 = selection(population);
-                int[][] children = crossover(parent1, parent2);
-                mutate(children[0]);
-                mutate(children[1]);
-                newPopulation.add(children[0]);
-                newPopulation.add(children[1]);
+        for (int i = 0; i < geracoes; i++) {
+            List<int[]> novaPopulacao = new ArrayList<>();
+            for (int j = 0; j < tamanhoPopulacao / 2; j++) {
+                int[] pai1 = selecao(populacao);
+                int[] pai2 = selecao(populacao);
+                int[][] filhos = combinarPais(pai1, pai2);
+                mutacao(filhos[0]);
+                mutacao(filhos[1]);
+                novaPopulacao.add(filhos[0]);
+                novaPopulacao.add(filhos[1]);
             }
-            population = newPopulation;
-            population.sort(Comparator.comparingInt(App::fitness).reversed());
+            populacao = novaPopulacao;
+            populacao.sort(Comparator.comparingInt(App::avaliarIndividuo).reversed());
+
+            int[] melhor = populacao.get(0);
+            int valor = avaliarIndividuo(melhor);
+            int peso = calcularPeso(melhor);
+
+            System.out.println("Geração " + (i + 1) + ": " +
+                    Arrays.toString(melhor) + " | Valor: " + valor + " | Peso: " + peso);
+
+            if (valor == melhorValorPossivel) {
+                System.out.println("Melhor solução atingida na geração " + (i + 1) + "!");
+                return melhor;
+            }
         }
-        return population.get(0);
+        return populacao.get(0);
     }
 
     public static void main(String[] args) {
-        int[] bestSolution = geneticAlgorithm();
-        int totalValue = fitness(bestSolution);
-        int totalWeight = Arrays.stream(bestSolution)
-                .map(i -> i == 1 ? items.get(Arrays.asList(bestSolution).indexOf(i)).weight : 0).sum();
+        int[] melhorSolucao = algoritmoGenetico();
+        int valorTotal = avaliarIndividuo(melhorSolucao);
+        int pesoTotal = calcularPeso(melhorSolucao);
 
-        System.out.println("Melhor solução encontrada: " + Arrays.toString(bestSolution));
-        System.out.println("Valor total: " + totalValue);
-        System.out.println("Peso total: " + totalWeight);
+        System.out.println("\nMelhor solução encontrada:");
+        System.out.println("Indivíduo: " + Arrays.toString(melhorSolucao));
+        System.out.println("Valor total: " + valorTotal);
+        System.out.println("Peso total: " + pesoTotal);
     }
 }
