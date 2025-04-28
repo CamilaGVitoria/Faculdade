@@ -1,0 +1,16 @@
+Qual ação teve maior média de retorno?
+    A maior média de retorno foi a Vale3.
+
+Qual apresentou menor variabilidade (risco)?
+    A que apresentou a menor variabilidade foi a Petr4, sendo assim é a com menor risco.
+
+Qual é mais adequada para um investidor conservador? E para um arrojado?
+    Investidor conservador: como o investidor conservados prefere o menor risco, então a mais adequada é a Petr4, que apresentou a 
+    menor variabiliadade;
+
+    Investidor Arrojado: como o investidor arrojado busca o maior retorno sem se preocupar com o menor risco, então, a mais adequada 
+    é a Vale3;
+
+O t-teste confirma uma diferença estatisticamente significativa? 
+    O calculo do t-teste mostrou que não existe uma diferença significativa entre os retornos médio das ações, como mostra no resultado 
+    presente no arquivo resultado_ttest.csv, portanto, os retornos médios podem ser considerados semelhantes.
