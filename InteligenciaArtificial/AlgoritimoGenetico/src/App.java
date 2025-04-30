@@ -29,7 +29,7 @@ public class App {
         return individuo;
     }
 
-    // fitness
+    // fitness - calcula valor total do individuo
     static int avaliarIndividuo(int[] individuo) {
         int valorTotal = 0, pesoTotal = 0;
         for (int i = 0; i < itens.size(); i++) {
@@ -41,6 +41,7 @@ public class App {
         return (pesoTotal <= pesoMax) ? valorTotal : 0;
     }
 
+    // calcula peso total do individuo
     static int calcularPeso(int[] individuo) {
         int pesoTotal = 0;
         for (int i = 0; i < individuo.length; i++) {
@@ -51,6 +52,7 @@ public class App {
         return pesoTotal;
     }
 
+    // seleciona aleatoriamente um individuo
     static int[] selecao(List<int[]> populacao) {
         return populacao.get(rand.nextInt(populacao.size()));
     }
@@ -76,6 +78,7 @@ public class App {
         return new int[][] { filho1, filho2 };
     }
 
+    // mutação que inverte os genes aleatoriamente
     static void mutacao(int[] individuo) {
         for (int i = 0; i < individuo.length; i++) {
             if (rand.nextDouble() < chanceMutacao) {
@@ -84,6 +87,7 @@ public class App {
         }
     }
 
+    // encontrando o melhor valor possivel
     static int encontrarValorMaximoPossivel() {
         int maxValor = 0;
         int n = itens.size();
@@ -102,10 +106,12 @@ public class App {
         return maxValor;
     }
 
+    // executa o algoritmo genético
     static int[] algoritmoGenetico() {
         int melhorValorPossivel = encontrarValorMaximoPossivel();
         System.out.println("Melhor valor possível: " + melhorValorPossivel);
 
+        // inicia a população aleatoriamente
         List<int[]> populacao = new ArrayList<>();
         for (int i = 0; i < tamanhoPopulacao; i++) {
             populacao.add(geraIndividuo());
@@ -137,6 +143,7 @@ public class App {
                 return melhor;
             }
         }
+        // retorna melhor indivíduo
         return populacao.get(0);
     }
 
